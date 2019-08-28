@@ -11,3 +11,18 @@ services:
     volumes:
       - './src:/go/src/example_app:rw'
     tty: true
+  mysql:
+    build:
+      context: ./docker-configuration
+      dockerfile: mysql-docker
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_USER: demo
+      MYSQL_PASSWORD: demo
+      MYSQL_ROOT_PASSWORD: 1234567890
+      MYSQL_DATABASE: go_workshop
+    # sync folders. MySQL data is stored outside container so that rebuilding doesn't clear db.
+    # folder is at workspace root.
+    volumes:
+      - ./db/:/var/lib/mysql
