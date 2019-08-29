@@ -47,8 +47,29 @@ func (service *UserController) GetUsers(context *gin.Context) {
 		})
 		return
 	}
+	if queryparam.Limit == 0 {
+		queryparam.Limit = 10
+	}
 	result := service.UserService.GetAllUser(queryparam.Limit, queryparam.Offset)
 	context.JSON(http.StatusOK, result)
+}
+
+func (service *UserController) StoreUser(context *gin.Context) {
+	payload := httpEntity.UserRequest{}
+	if err := context.ShouldBind(&payload); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Bad Request",
+		})
+		return
+	}
+	success := service.UserService.StoreUser(payload)
+	if !success {
+		context.JSON(http.StatusNoContent, gin.H{})
+		return
+	}
+
+	context.JSON(http.StatusCreated, gin.H{})
+	
 }
 
 func (service *UserController) UpdateUsersByID(context *gin.Context) {
@@ -65,6 +86,30 @@ func (service *UserController) UpdateUsersByID(context *gin.Context) {
 		})
 		return
 	}
-	service.UserService.UpdateUserByID(id,payload)
-	context.JSON(http.StatusNoContent, gin.H{})
-} 
+	success := service.UserService.UpdateUserByID(id,payload)
+
+	if !success {
+		context.JSON(http.StatusNoContent, gin.H{})
+		return
+	}
+	
+	context.JSON(http.StatusOK, gin.H{})
+}
+
+func (service *UserController) DeleteUser(context *gin.Context) {
+	id, err := strconv.Atoi(context.Param("id"))
+	if nil != err {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Bad Request",
+		})
+	}
+	
+	result := service.UserService.DeleteUser(id)
+
+	if result.ID == 0 {
+		context.JSON(http.StatusNoContent, gin.H{})
+		return
+	}
+
+	context.JSON(http.StatusOK, result)
+}

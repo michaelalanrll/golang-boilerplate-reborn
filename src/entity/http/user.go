@@ -6,6 +6,7 @@ type UserRequest struct {
 	Name 			string     	`json:"name"`
 	IDCardNumber 	string     	`json:"id_card_number"`
 	Address 		string     	`json:"address"`
+	UserStatusId	uint		`json:"user_status_id"`
 }
 
 type UserDetailResponse struct {

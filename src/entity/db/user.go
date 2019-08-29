@@ -11,8 +11,7 @@ type User struct {
 	UpdatedAt    	*time.Time 	`gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt    	*time.Time 	`gorm:"column:deleted_at" json:"deleted_at"`
 	UserStatus 		*UserStatus `gorm:"auto_preload"; gorm:"foreignkey:UserStatusID"`
-	UserStatusID 	uint 		`gorm:"column:user_status_id"`
-	
+	UserStatusID 	uint 		`gorm:"column:user_status_id"`	
 }
 
 func (User) TableName() string {

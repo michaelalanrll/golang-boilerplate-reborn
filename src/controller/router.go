@@ -25,4 +25,6 @@ func (rLoader *UserRouterLoader) routerDefinition(router *gin.Engine,handler *Us
 	group.GET("", handler.GetUsers)
 	group.GET(":id", handler.GetUserByID)
 	group.PUT(":id", handler.UpdateUsersByID)
+	group.POST("", handler.StoreUser)
+	group.DELETE(":id", handler.DeleteUser)
 }

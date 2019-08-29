@@ -1,7 +1,9 @@
 package services
 
 import (
+	"fmt"
 	"sync"
+	"time"
 	"github.com/jinzhu/copier"
 	httpEntity "example_app/entity/http"
 	dbEntity "example_app/entity/db"
@@ -26,6 +28,8 @@ type UserServiceInterface interface {
 	GetUserByID(id int, waitGroup *sync.WaitGroup) *httpEntity.UserDetailResponse
 	GetAllUser(page int,count int) []httpEntity.UserResponse
 	UpdateUserByID(id int, payload httpEntity.UserRequest) bool
+	StoreUser(payload httpEntity.UserRequest) bool
+	DeleteUser(id int) *httpEntity.UserResponse
 }
 
 func (service *UserService) GetUserByID(id int, waitGroup *sync.WaitGroup) *httpEntity.UserDetailResponse{
@@ -60,13 +64,47 @@ func (service *UserService) GetAllUser(page int,count int) []httpEntity.UserResp
 }
 
 func (service *UserService) UpdateUserByID(id int, payload httpEntity.UserRequest) bool {
-	user := &dbEntity.User{}
-	user.Name = payload.Name
-	user.IDCardNumber = payload.IDCardNumber
-	user.Address = payload.Address
+	now := time.Now()
+	user := &dbEntity.User{
+		Name: payload.Name,
+		IDCardNumber: payload.IDCardNumber,
+		Address: payload.Address,
+		UserStatusID: payload.UserStatusId,
+		UpdatedAt: &now,
+	}
 	err := service.userRepository.UpdateUserByID(id, user)
 	if nil != err {
+		fmt.Println(err.Error())
 		return false
 	}
 	return true
+}
+
+func (service *UserService) StoreUser(payload httpEntity.UserRequest) bool {
+	now := time.Now()
+	user := &dbEntity.User{
+		Name: payload.Name,
+		IDCardNumber: payload.IDCardNumber,
+		Address: payload.Address,
+		UserStatusID: payload.UserStatusId,
+		CreatedAt: &now,
+		UpdatedAt: &now,
+	}
+	err := service.userRepository.StoreUser(user)
+	if nil != err {
+		fmt.Println(err.Error())
+		return false
+	}
+	return true
+}
+
+func (service *UserService) DeleteUser(id int) *httpEntity.UserResponse{
+	user := dbEntity.User{}
+	result := service.userRepository.DeleteUser(id, &user)
+
+	output := &httpEntity.UserResponse{}
+	if result == nil {
+		copier.Copy(output, user)
+	}
+	return output
 }
