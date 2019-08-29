@@ -2,7 +2,6 @@ package db
 
 import (
 	"errors"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	connection "example_app/util/helper/mysqlconnection"
 	dbEntity "example_app/entity/db"
