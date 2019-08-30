@@ -12,6 +12,8 @@ func LoadRouterTestMock() (*gin.Context, *gin.Engine, *httptest.ResponseRecorder
 	
 	routerLoader := &UserRouterLoader{}
 	routerLoader.UserRouterTestMock(routers)
+	routerPost := &PostRouterLoader{}
+	routerPost.PostRouterTestMock(routers)
 	
 	return context, routers, resp
 }
@@ -23,3 +25,9 @@ func (rLoader *UserRouterLoader) UserRouterTestMock(router *gin.Engine){
 	rLoader.routerDefinition(router,handler)
 }
 
+func (rLoader *PostRouterLoader) PostRouterTestMock(router *gin.Engine){
+	handler := &PostController{
+		PostService: &PostServiceMock{},
+	}
+	rLoader.routerDefinition(router,handler)
+}

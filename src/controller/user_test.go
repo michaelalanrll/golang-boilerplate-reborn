@@ -62,6 +62,22 @@ func (service *UserServiceMock) UpdateUserByID(id int, payload httpEntity.UserRe
 	return true
 }
 
+func (service *UserServiceMock) DeleteUser(id int) *httpEntity.UserResponse{
+	t, _ := time.Parse("2006-01-02", "2019-08-10")
+	return &httpEntity.UserResponse{
+		ID: uint(id),
+		Name: "Test Name Mock",
+		IDCardNumber: "IDCARDTEST12345",
+		Address: "Address Test Street",
+		CreatedAt:&t,
+		UpdatedAt:&t,
+	}
+}
+
+func (service *UserServiceMock) StoreUser(payload httpEntity.UserRequest) bool {
+	return true
+}
+
 func TestUserGetByIDMock(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
@@ -123,5 +139,5 @@ func TestUpdateUserByIDMock(t *testing.T) {
 	c.Request.Header.Add("Content-Type", "application/json")
 	r.ServeHTTP(resp, c.Request)
 
-	assert.Equal(http.StatusNoContent, resp.Code, "Status should be 204")
+	assert.Equal(http.StatusOK, resp.Code, "Status should be 200")
 }
